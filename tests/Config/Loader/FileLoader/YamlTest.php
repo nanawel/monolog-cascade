@@ -19,31 +19,31 @@ use Cascade\Tests\Fixtures;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class YamlTest extends \PHPUnit_Framework_TestCase
+class YamlTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Yaml loader mock builder
      * @var \PHPUnit_Framework_MockObject_MockBuilder
      */
-    protected $yamlLoader = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $yamlLoader = null;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $fileLocatorMock = $this->getMock(
-            'Symfony\Component\Config\FileLocatorInterface'
+        $fileLocatorMock = $this->createMock(
+            \Symfony\Component\Config\FileLocatorInterface::class
         );
 
         $this->yamlLoader = $this->getMockBuilder(
-            'Cascade\Config\Loader\FileLoader\Yaml'
+            \Cascade\Config\Loader\FileLoader\Yaml::class
         )
             ->setConstructorArgs(array($fileLocatorMock))
-            ->setMethods(array('readFrom', 'isFile', 'validateExtension'))
+            ->onlyMethods(array('readFrom', 'isFile', 'validateExtension'))
             ->getMock();
     }
 
-    public function tearDown()
+    protected function teardown(): void
     {
         $this->yamlLoader = null;
         parent::tearDown();
@@ -52,7 +52,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading a Yaml string
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $yaml = Fixtures::getSampleYamlString();
 
@@ -70,7 +70,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
      * Data provider for testSupportsWithInvalidResource
      * @return array array non-string values
      */
-    public function notStringDataProvider()
+    public function notStringDataProvider(): array
     {
         return array(
             array(array()),
@@ -92,7 +92,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
      * @param mixed $invalidResource Invalid resource value
      * @dataProvider notStringDataProvider
      */
-    public function testSupportsWithInvalidResource($invalidResource)
+    public function testSupportsWithInvalidResource($invalidResource): void
     {
         $this->assertFalse($this->yamlLoader->supports($invalidResource));
     }
@@ -100,7 +100,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading a Yaml string
      */
-    public function testSupportsWithYamlString()
+    public function testSupportsWithYamlString(): void
     {
         $this->yamlLoader->expects($this->once())
             ->method('isFile')
@@ -114,7 +114,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading a Yaml file
      */
-    public function testSupportsWithYamlFile()
+    public function testSupportsWithYamlFile(): void
     {
         $this->yamlLoader->expects($this->once())
             ->method('isFile')

@@ -23,21 +23,20 @@ class LoggerLoader
 {
     /**
      * Array of options
-     * @var array
      */
-    protected $loggerOptions = array();
+    protected array $loggerOptions;
 
     /**
      * Array of handlers
      * @var Monolog\Handler\HandlerInterface[]
      */
-    protected $handlers = array();
+    protected array $handlers;
 
     /**
      * Array of processors
      * @var callable[]
      */
-    protected $processors = array();
+    protected array $processors;
 
     /**
      * Logger
@@ -78,7 +77,7 @@ class LoggerLoader
      *
      * @return Monolog\Handler\HandlerInterface[] Array of Monolog handlers
      */
-    public function resolveHandlers(array $loggerOptions, array $handlers)
+    public function resolveHandlers(array $loggerOptions, array $handlers): array
     {
         $handlerArray = array();
 
@@ -116,7 +115,7 @@ class LoggerLoader
      *
      * @return callable[] Array of Monolog processors
      */
-    public function resolveProcessors(array $loggerOptions, $processors)
+    public function resolveProcessors(array $loggerOptions, array $processors): array
     {
         $processorArray = array();
 
@@ -148,7 +147,7 @@ class LoggerLoader
      *
      * @param Monolog\Handler\HandlerInterface[] Array of Monolog handlers
      */
-    private function addHandlers(array $handlers)
+    private function addHandlers(array $handlers): void
     {
         // We need to reverse the array because Monolog "pushes" handlers to top of the stack
         foreach (array_reverse($handlers) as $handler) {
@@ -161,7 +160,7 @@ class LoggerLoader
      *
      * @param callable[] Array of Monolog processors
      */
-    private function addProcessors(array $processors)
+    private function addProcessors(array $processors): void
     {
         // We need to reverse the array because Monolog "pushes" processors to top of the stack
         foreach (array_reverse($processors) as $processor) {

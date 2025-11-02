@@ -21,15 +21,15 @@ use Cascade\Tests\Fixtures;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class CascadeTest extends \PHPUnit_Framework_TestCase
+class CascadeTest extends \PHPUnit\Framework\TestCase
 {
-    public function teardown()
+    protected function teardown(): void
     {
         Registry::clear();
         parent::teardown();
     }
 
-    public function testCreateLogger()
+    public function testCreateLogger(): void
     {
         $logger = Cascade::createLogger('test');
 
@@ -38,7 +38,7 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(Registry::hasLogger('test'));
     }
 
-    public function testRegistry()
+    public function testRegistry(): void
     {
         // Creates the logger and push it to the registry
         $logger = Cascade::logger('test');
@@ -48,18 +48,16 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($logger, $logger2);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testRegistryWithInvalidName()
+    public function testRegistryWithInvalidName(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         $logger = Cascade::getLogger(null);
     }
 
-    public function testFileConfig()
+    public function testFileConfig(): void
     {
         $options = Fixtures::getPhpArrayConfig();
         Cascade::fileConfig($options);
-        $this->assertInstanceOf('Cascade\Config', Cascade::getConfig());
+        $this->assertInstanceOf(\Cascade\Config::class, Cascade::getConfig());
     }
 }

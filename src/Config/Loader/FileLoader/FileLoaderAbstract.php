@@ -78,7 +78,7 @@ abstract class FileLoaderAbstract extends FileLoader
      *
      * @return array|mixed Return the section of an array or just a value
      */
-    public function getSectionOf($array, $section = '')
+    public function getSectionOf(array $array, $section = '')
     {
         if (!empty($section) && array_key_exists($section, $array)) {
             return $array[$section];

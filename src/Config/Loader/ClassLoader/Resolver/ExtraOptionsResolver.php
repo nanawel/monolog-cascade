@@ -24,15 +24,14 @@ class ExtraOptionsResolver
 {
     /**
      * Reflection class for which you want to resolve extra options
-     * @var \ReflectionClass
      */
-    protected $reflected = null;
+    protected \ReflectionClass $reflected;
 
     /**
      * Registry of resolvers
      * @var OptionsResolver[]
      */
-    private static $resolvers = array();
+    private static array $resolvers = array();
 
     /**
      * Associative array of parameters to resolve against
@@ -58,7 +57,7 @@ class ExtraOptionsResolver
      *
      * @param array $params Associative array of extra parameters we want to resolve against
      */
-    public function setParams(array $params = array())
+    public function setParams(array $params = array()): void
     {
         $this->params = $params;
     }
@@ -90,7 +89,7 @@ class ExtraOptionsResolver
      *
      * @return string Unique MD5 hash
      */
-    public static function generateParamsHashKey($params)
+    public static function generateParamsHashKey($params): string
     {
         return md5(serialize($params));
     }
@@ -110,6 +109,7 @@ class ExtraOptionsResolver
                 $resolver->setDefined($name);
                 continue;
             }
+
             if ($this->reflected->hasProperty($name) &&
                 $this->reflected->getProperty($name)->isPublic()
             ) {
@@ -136,7 +136,7 @@ class ExtraOptionsResolver
      *
      * @return array Array of resolved options
      */
-    public function resolve($options, ClassLoader $classLoader = null)
+    public function resolve(array $options, ClassLoader $classLoader = null)
     {
         $hashKey = self::generateParamsHashKey($this->params);
 

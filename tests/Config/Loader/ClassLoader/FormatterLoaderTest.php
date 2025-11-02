@@ -17,12 +17,12 @@ use Cascade\Config\Loader\ClassLoader\FormatterLoader;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
+class FormatterLoaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Set up function
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         new FormatterLoader(array());
@@ -31,7 +31,7 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Tear down function
      */
-    public function tearDown()
+    protected function teardown(): void
     {
         FormatterLoader::$extraOptionHandlers = array();
         parent::tearDown();
@@ -46,7 +46,7 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
      *
      * @return \Closure Closure
      */
-    private function getHandler($class, $optionName)
+    private function getHandler(string $class, string $optionName)
     {
         if (isset(FormatterLoader::$extraOptionHandlers[$class][$optionName])) {
             // Get the closure
@@ -75,11 +75,11 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
      * @param  mixed $methodArg Parameter passed to the closure
      * @param  \Closure $closure Closure to call
      */
-    private function doTestMethodCalledInHandler($class, $methodName, $methodArg, \Closure $closure)
+    private function doTestMethodCalledInHandler(string $class, string $methodName, bool $methodArg, \Closure $closure): void
     {
         // Setup mock and expectations
         $mock = $this->getMockBuilder($class)
-            ->setMethods(array($methodName))
+            ->onlyMethods(array($methodName))
             ->getMock();
 
         $mock->expects($this->once())
@@ -94,7 +94,7 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Test that handlers exist
      */
-    public function testHandlersExist()
+    public function testHandlersExist(): void
     {
         $this->assertTrue(count(FormatterLoader::$extraOptionHandlers) > 0);
     }
@@ -106,11 +106,11 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
      *
      * @return array of array of args for testHandlers
      */
-    public function handlerParamsProvider()
+    public function handlerParamsProvider(): array
     {
         return array(
             array(
-                'Monolog\Formatter\LineFormatter',   // Class name
+                \Monolog\Formatter\LineFormatter::class,   // Class name
                 'includeStacktraces',                // Option name
                 true,                                // Option test value
                 'includeStacktraces'                 // Name of the method called by your handler
@@ -128,7 +128,7 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
      * @param  string $calledMethodName Expected called method name
      * @dataProvider handlerParamsProvider
      */
-    public function testHandlers($class, $optionName, $optionValue, $calledMethodName)
+    public function testHandlers(string $class, string $optionName, bool $optionValue, string $calledMethodName): void
     {
         // Test if handler exists and return it
         $closure = $this->getHandler($class, $optionName);

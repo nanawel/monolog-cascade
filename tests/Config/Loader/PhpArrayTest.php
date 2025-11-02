@@ -18,7 +18,7 @@ use Cascade\Tests\Fixtures;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class PhpArrayTest extends \PHPUnit_Framework_TestCase
+class PhpArrayTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Array loader object
@@ -26,14 +26,14 @@ class PhpArrayTest extends \PHPUnit_Framework_TestCase
      */
     protected $arrayLoader = null;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->arrayLoader = new ArrayLoader();
     }
 
-    public function tearDown()
+    protected function teardown(): void
     {
         $this->arrayLoader = null;
         parent::tearDown();
@@ -42,7 +42,7 @@ class PhpArrayTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading a Php array
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $array = Fixtures::getSamplePhpArray();
         $this->assertSame($array, $this->arrayLoader->load($array));
@@ -53,7 +53,7 @@ class PhpArrayTest extends \PHPUnit_Framework_TestCase
      *
      * @return array array of non-array values
      */
-    public function notStringDataProvider()
+    public function notStringDataProvider(): array
     {
         return array(
             array('Some string'),
@@ -62,7 +62,7 @@ class PhpArrayTest extends \PHPUnit_Framework_TestCase
             array(123.456),
             array(null),
             array(new \stdClass),
-            array(function () {
+            array(function (): void {
             })
         );
     }
@@ -73,7 +73,7 @@ class PhpArrayTest extends \PHPUnit_Framework_TestCase
      * @param mixed $invalidResource Invalid resource value
      * @dataProvider notStringDataProvider
      */
-    public function testSupportsWithInvalidResource($invalidResource)
+    public function testSupportsWithInvalidResource($invalidResource): void
     {
         $this->assertFalse($this->arrayLoader->supports($invalidResource));
     }
@@ -81,7 +81,7 @@ class PhpArrayTest extends \PHPUnit_Framework_TestCase
     /**
      * Test supports with a valid array
      */
-    public function testSupports()
+    public function testSupports(): void
     {
         $array = Fixtures::getSamplePhpArray();
         $this->assertTrue($this->arrayLoader->supports($array));

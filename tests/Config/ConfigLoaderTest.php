@@ -18,7 +18,7 @@ use Cascade\Tests\Fixtures;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class ConfigLoaderTest extends \PHPUnit_Framework_TestCase
+class ConfigLoaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Loader to test against
@@ -26,27 +26,27 @@ class ConfigLoaderTest extends \PHPUnit_Framework_TestCase
      */
     protected $loader = null;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setup();
         $this->loader = new ConfigLoader();
     }
 
-    public function tearDown()
+    protected function teardown(): void
     {
         $this->loader = null;
         parent::tearDown();
     }
 
-    public function testLoader()
+    public function testLoader(): void
     {
         $this->assertInstanceOf(
-            'Symfony\Component\Config\Loader\DelegatingLoader',
+            \Symfony\Component\Config\Loader\DelegatingLoader::class,
             $this->loader
         );
 
         $this->assertInstanceOf(
-            'Symfony\Component\Config\Loader\LoaderResolver',
+            \Symfony\Component\Config\Loader\LoaderResolver::class,
             $this->loader->getResolver()
         );
 
@@ -55,11 +55,11 @@ class ConfigLoaderTest extends \PHPUnit_Framework_TestCase
 
         // Checking the order of thr loaders
         $this->assertInstanceOf(
-            'Cascade\Config\Loader\PhpArray',
+            \Cascade\Config\Loader\PhpArray::class,
             $configLoaders[0]
         );
         $this->assertInstanceOf(
-            'Cascade\Config\Loader\FileLoader\PhpArray',
+            \Cascade\Config\Loader\FileLoader\PhpArray::class,
             $configLoaders[1]
         );
         $this->assertInstanceOf(
@@ -67,12 +67,12 @@ class ConfigLoaderTest extends \PHPUnit_Framework_TestCase
             $configLoaders[2]
         );
         $this->assertInstanceOf(
-            'Cascade\Config\Loader\FileLoader\Yaml',
+            \Cascade\Config\Loader\FileLoader\Yaml::class,
             $configLoaders[3]
         );
     }
 
-    public function testLoad()
+    public function testLoad(): void
     {
         $json = Fixtures::getSampleJsonString();
         $this->assertEquals(json_decode($json, true), $this->loader->load($json));

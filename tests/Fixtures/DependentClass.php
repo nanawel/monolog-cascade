@@ -20,9 +20,8 @@ class DependentClass
 {
     /**
      * An object dependency
-     * @var SampleClass
      */
-    private $dependency;
+    private \Cascade\Tests\Fixtures\SampleClass $dependency;
 
     /**
      * Constructor
@@ -39,7 +38,7 @@ class DependentClass
      *
      * @param SampleClass $dependency Some sample object
      */
-    public function setDependency(SampleClass $dependency)
+    public function setDependency(SampleClass $dependency): void
     {
         $this->dependency = $dependency;
     }

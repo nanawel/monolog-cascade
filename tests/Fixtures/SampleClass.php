@@ -80,7 +80,7 @@ class SampleClass
      *
      * @param mixed $mandatory Some value
      */
-    public function setMandatory($mandatory)
+    public function setMandatory($mandatory): void
     {
         $this->mandatory = $mandatory;
     }
@@ -90,7 +90,7 @@ class SampleClass
      *
      * @param  mixed $value Some value
      */
-    public function optionalA($value)
+    public function optionalA($value): void
     {
         $this->optionalA = $value;
     }
@@ -100,7 +100,7 @@ class SampleClass
      *
      * @param  mixed $value Some value
      */
-    public function optionalX($value)
+    public function optionalX($value): void
     {
         $this->optionalX = $value;
     }
@@ -110,7 +110,7 @@ class SampleClass
      *
      * @param  mixed $value Some value
      */
-    public function setHello($value)
+    public function setHello($value): void
     {
         $this->hello = $value;
     }
@@ -120,7 +120,7 @@ class SampleClass
      *
      * @param  mixed $value Some value
      */
-    public function setThere($value)
+    public function setThere($value): void
     {
         $this->there = $value;
     }

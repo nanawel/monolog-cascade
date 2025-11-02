@@ -14,43 +14,41 @@ use Cascade\Config\Loader\FileLoader\PhpArray as ArrayLoader;
 /**
  * Class PhpArrayTest
  */
-class PhpArrayTest extends \PHPUnit_Framework_TestCase
+class PhpArrayTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ArrayLoader
      */
     protected $loader;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loader = new ArrayLoader(new FileLocator());
     }
 
-    protected function tearDown()
+    protected function teardown(): void
     {
         $this->loader = null;
     }
 
-    public function testSupportsPhpFile()
+    public function testSupportsPhpFile(): void
     {
         $this->assertTrue($this->loader->supports(__DIR__.'/../../../Fixtures/fixture_config.php'));
     }
 
-    public function testDoesNotSupportNonPhpFiles()
+    public function testDoesNotSupportNonPhpFiles(): void
     {
         $this->assertFalse($this->loader->supports('foo'));
         $this->assertFalse($this->loader->supports(__DIR__.'/../../../Fixtures/fixture_config.json'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testThrowsExceptionWhenLoadingFileIfDoesNotReturnValidPhpArray()
+    public function testThrowsExceptionWhenLoadingFileIfDoesNotReturnValidPhpArray(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->loader->load(__DIR__.'/../../../Fixtures/fixture_invalid_config.php');
     }
 
-    public function testLoadsPhpArrayConfigFromFile()
+    public function testLoadsPhpArrayConfigFromFile(): void
     {
         $this->assertSame(
             include __DIR__.'/../../../Fixtures/fixture_config.php',

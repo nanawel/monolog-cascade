@@ -23,15 +23,13 @@ class ConstructorResolver
 {
     /**
      * Reflection class for which you want to resolve constructor options
-     * @var \ReflectionClass
      */
-    protected $reflected = null;
+    protected \ReflectionClass $reflected;
 
     /**
      * Registry of resolvers
-     * @var array
      */
-    private static $resolvers = array();
+    private static array $resolvers = array();
 
     /**
      * Associative array of contructor args to resolve against
@@ -58,7 +56,7 @@ class ConstructorResolver
      * Convert the parameter names to camelCase for classes that have contructor
      * params defined in snake_case for consistency with the options
      */
-    public function initConstructorArgs()
+    public function initConstructorArgs(): void
     {
         $constructor = $this->reflected->getConstructor();
 
@@ -116,7 +114,7 @@ class ConstructorResolver
      *
      * @return array Array of ordered args
      */
-    public function hashToArgsArray($hashOfOptions)
+    public function hashToArgsArray(array $hashOfOptions): array
     {
         $optionsArray = new \SplFixedArray(count($hashOfOptions));
 
@@ -138,7 +136,7 @@ class ConstructorResolver
      *
      * @return array Array of resolved ordered args
      */
-    public function resolve(array $options)
+    public function resolve(array $options): array
     {
         $reflectedClassName = $this->reflected->getName();
 

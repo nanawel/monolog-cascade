@@ -20,12 +20,12 @@ use Cascade\Tests\Fixtures\SampleClass;
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  * @author Dom Morgan <dom@d3r.com>
  */
-class ClassLoaderTest extends \PHPUnit_Framework_TestCase
+class ClassLoaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Set up function
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -33,7 +33,7 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Tear down function
      */
-    public function tearDown()
+    protected function teardown(): void
     {
         ClassLoader::$extraOptionHandlers = array();
         parent::tearDown();
@@ -43,15 +43,15 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
      * Provides options with and without a class param
      * @return array of args
      */
-    public function dataFortestSetClass()
+    public function dataFortestSetClass(): array
     {
         return array(
             array(
                 array(
-                    'class' => 'Cascade\Tests\Fixtures\SampleClass',
+                    'class' => \Cascade\Tests\Fixtures\SampleClass::class,
                     'some_param' => 'abc'
                 ),
-                'Cascade\Tests\Fixtures\SampleClass'
+                \Cascade\Tests\Fixtures\SampleClass::class
             ),
             array(
                 array(
@@ -69,14 +69,14 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
      * @param  string $expectedClass Expected classname of the instantiated object
      * @dataProvider dataFortestSetClass
      */
-    public function testSetClass($options, $expectedClass)
+    public function testSetClass(array $options, string $expectedClass): void
     {
         $loader = new ClassLoader($options);
 
         $this->assertEquals($expectedClass, $loader->class);
     }
 
-    public function testOptionsToCamelCase()
+    public function testOptionsToCamelCase(): void
     {
         $array = array('hello_there' => 'Hello', 'bye_bye' => 'Bye');
 
@@ -86,16 +86,16 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetExtraOptionsHandler()
+    public function testGetExtraOptionsHandler(): void
     {
         ClassLoader::$extraOptionHandlers = array(
             '*' => array(
-                'hello' => function ($instance, $value) {
+                'hello' => function ($instance, $value): void {
                     $instance->setHello(strtoupper($value));
                 }
             ),
-            'Cascade\Tests\Fixtures\SampleClass' => array(
-                'there' => function ($instance, $value) {
+            \Cascade\Tests\Fixtures\SampleClass::class => array(
+                'there' => function ($instance, $value): void {
                     $instance->setThere(strtoupper($value).'!!!');
                 }
             )
@@ -109,10 +109,10 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($loader->getExtraOptionsHandler('nohandler'));
     }
 
-    public function testLoad()
+    public function testLoad(): void
     {
         $options = array(
-            'class' => 'Cascade\Tests\Fixtures\SampleClass',
+            'class' => \Cascade\Tests\Fixtures\SampleClass::class,
             'mandatory' => 'someValue',
             'optional_X' => 'testing some stuff',
             'optional_Y' => 'testing other stuff',
@@ -122,12 +122,12 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
 
         ClassLoader::$extraOptionHandlers = array(
             '*' => array(
-                'hello' => function ($instance, $value) {
+                'hello' => function ($instance, $value): void {
                     $instance->setHello(strtoupper($value));
                 }
             ),
-            'Cascade\Tests\Fixtures\SampleClass' => array(
-                'there' => function ($instance, $value) {
+            \Cascade\Tests\Fixtures\SampleClass::class => array(
+                'there' => function ($instance, $value): void {
                     $instance->setThere(strtoupper($value).'!!!');
                 }
             )
@@ -148,12 +148,12 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Test a nested class to load
      */
-    public function testLoadDependency()
+    public function testLoadDependency(): void
     {
         $options = array(
-            'class' => 'Cascade\Tests\Fixtures\DependentClass',
+            'class' => \Cascade\Tests\Fixtures\DependentClass::class,
             'dependency' => array(
-                'class' => 'Cascade\Tests\Fixtures\SampleClass',
+                'class' => \Cascade\Tests\Fixtures\SampleClass::class,
                 'mandatory' => 'someValue',
             )
         );

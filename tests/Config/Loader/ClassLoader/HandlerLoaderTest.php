@@ -19,15 +19,21 @@ use Cascade\Config\Loader\ClassLoader\HandlerLoader;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
+class HandlerLoaderTest extends \PHPUnit\Framework\TestCase
 {
-    public function testHandlerLoader()
+    public function testHandlerLoader(): void
     {
-        $dummyClosure = function () {
+        $dummyClosure = function (): void {
             // Empty function
         };
-        $original = $options = array(
-            'class' => 'Monolog\Handler\TestHandler',
+        $original = array(
+            'class' => \Monolog\Handler\TestHandler::class,
+            'level' => 'DEBUG',
+            'formatter' => 'test_formatter',
+            'processors' => array('test_processor_1', 'test_processor_2')
+        );
+        $options = array(
+            'class' => \Monolog\Handler\TestHandler::class,
             'level' => 'DEBUG',
             'formatter' => 'test_formatter',
             'processors' => array('test_processor_1', 'test_processor_2')
@@ -45,19 +51,18 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($processors['test_processor_2'], $options['processors'][1]);
     }
 
-    public function testHandlerLoaderWithNoOptions()
+    public function testHandlerLoaderWithNoOptions(): void
     {
-        $original = $options = array();
+        $original = array();
+        $options = array();
         $loader = new HandlerLoader($options);
 
         $this->assertEquals($original, $options);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testHandlerLoaderWithInvalidFormatter()
+    public function testHandlerLoaderWithInvalidFormatter(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         $options = array(
             'formatter' => 'test_formatter'
         );
@@ -66,12 +71,10 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = new HandlerLoader($options, $formatters);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testHandlerLoaderWithInvalidProcessor()
+    public function testHandlerLoaderWithInvalidProcessor(): void
     {
-        $dummyClosure = function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $dummyClosure = function (): void {
             // Empty function
         };
         $options = array(
@@ -83,12 +86,10 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = new HandlerLoader($options, $formatters, $processors);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testHandlerLoaderWithInvalidHandler()
+    public function testHandlerLoaderWithInvalidHandler(): void
     {
-        $dummyClosure = function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $dummyClosure = function (): void {
             // Empty function
         };
         $options = array(
@@ -101,12 +102,10 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = new HandlerLoader($options, $formatters, $processors, $handlers);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testHandlerLoaderWithInvalidHandlers()
+    public function testHandlerLoaderWithInvalidHandlers(): void
     {
-        $dummyClosure = function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $dummyClosure = function (): void {
             // Empty function
         };
         $options = array(
@@ -131,7 +130,7 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
      *
      * @return \Closure Closure
      */
-    private function getHandler($class, $optionName)
+    private function getHandler(string $class, string $optionName)
     {
         if (isset(HandlerLoader::$extraOptionHandlers[$class][$optionName])) {
             // Get the closure
@@ -160,12 +159,12 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
      * @param  mixed $methodArg Parameter passed to the closure
      * @param  \Closure $closure Closure to call
      */
-    private function doTestMethodCalledInHandler($class, $methodName, $methodArg, \Closure $closure)
+    private function doTestMethodCalledInHandler(string $class, string $methodName, $methodArg, \Closure $closure): void
     {
         // Setup mock and expectations
         $mock = $this->getMockBuilder($class)
             ->disableOriginalConstructor()
-            ->setMethods(array($methodName))
+            ->onlyMethods(array($methodName))
             ->getMock();
 
         $mock->expects($this->once())
@@ -180,7 +179,7 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Test that handlers exist
      */
-    public function testHandlersExist()
+    public function testHandlersExist(): void
     {
         $options = array();
         new HandlerLoader($options);
@@ -196,7 +195,7 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
      *
      * @return array of array of args for testHandlers
      */
-    public function handlerParamsProvider()
+    public function handlerParamsProvider(): array
     {
         return array(
             array(
@@ -206,7 +205,7 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
                 'setFormatter'          // Name of the method called by your handler
             ),
             array(
-                'Monolog\Handler\LogglyHandler',    // Class name
+                \Monolog\Handler\LogglyHandler::class,    // Class name
                 'tags',                             // Option name
                 array('some_tag'),                  // Option test value
                 'setTag'                            // Name of the method called by your handler
@@ -223,15 +222,15 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
      * @param  string $calledMethodName Expected called method name
      * @dataProvider handlerParamsProvider
      */
-    public function testHandlers($class, $optionName, $optionValue, $calledMethodName)
+    public function testHandlers(string $class, string $optionName, $optionValue, string $calledMethodName): void
     {
         $options = array();
         new HandlerLoader($options);
         // Test if handler exists and return it
         $closure = $this->getHandler($class, $optionName);
 
-        if ($class == '*') {
-            $class = 'Monolog\Handler\TestHandler';
+        if ($class === '*') {
+            $class = \Monolog\Handler\TestHandler::class;
         }
 
         $this->doTestMethodCalledInHandler($class, $calledMethodName, $optionValue, $closure);
@@ -240,7 +239,7 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Test extra option processor handler
      */
-    public function testHandlerForProcessor()
+    public function testHandlerForProcessor(): void
     {
         $options = array();
 
@@ -249,21 +248,29 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
         $processorsArray = array($mockProcessor1, $mockProcessor2);
 
         // Setup mock and expectations
-        $mockHandler = $this->getMockBuilder('Monolog\Handler\TestHandler')
+        $mockHandler = $this->getMockBuilder(\Monolog\Handler\TestHandler::class)
             ->disableOriginalConstructor()
-            ->setMethods(array('pushProcessor'))
+            ->onlyMethods(array('pushProcessor'))
             ->getMock();
+        $matcher = $this->exactly(count($processorsArray));
 
-        $mockHandler->expects($this->exactly(sizeof($processorsArray)))
-            ->method('pushProcessor')
-            ->withConsecutive(array($mockProcessor2), array($mockProcessor1));
+        $mockHandler->expects($matcher)
+            ->method('pushProcessor')->willReturnCallback(function (...$parameters) use ($matcher, $mockProcessor2, $mockProcessor1): void {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame($mockProcessor2, $parameters[0]);
+            }
+
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame($mockProcessor1, $parameters[0]);
+            }
+        });
 
         new HandlerLoader($options);
         $closure = $this->getHandler('*', 'processors');
         $closure($mockHandler, $processorsArray);
     }
 
-    public function testReplacesHandlerNamesInOptionsArrayWithLoadedCallable()
+    public function testReplacesHandlerNamesInOptionsArrayWithLoadedCallable(): void
     {
         $options = array(
             'handlers' => array(
@@ -276,15 +283,9 @@ class HandlerLoaderTest extends \PHPUnit_Framework_TestCase
         $formatters = array();
         $processors = array();
         $handlers = array(
-            'foo' => function () {
-                return 'foo';
-            },
-            'bar' => function () {
-                return 'bar';
-            },
-            'baz' => function () {
-                return 'baz';
-            },
+            'foo' => fn(): string => 'foo',
+            'bar' => fn(): string => 'bar',
+            'baz' => fn(): string => 'baz',
         );
 
         $loader = new HandlerLoader($options, $formatters, $processors, $handlers);

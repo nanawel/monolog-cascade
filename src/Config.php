@@ -64,9 +64,8 @@ class Config
 
     /**
      * Config loader
-     * @var ConfigLoader
      */
-    protected $loader = null;
+    protected \Cascade\Config\ConfigLoader $loader;
 
     /**
      * Instantiate a Config object
@@ -83,7 +82,7 @@ class Config
     /**
      * Load config options into the options array using the injected loader
      */
-    public function load()
+    public function load(): void
     {
         $this->options = $this->loader->load($this->input);
     }
@@ -91,7 +90,7 @@ class Config
     /**
      * Configure and register Logger(s) according to the options passed in
      */
-    public function configure()
+    public function configure(): void
     {
         if (!isset($this->options['disable_existing_loggers'])) {
             // We disable any existing loggers by default

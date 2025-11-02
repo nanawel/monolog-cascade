@@ -17,31 +17,31 @@ use Cascade\Tests\Fixtures;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class JsonTest extends \PHPUnit_Framework_TestCase
+class JsonTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * JSON loader mock builder
      * @var \PHPUnit_Framework_MockObject_MockBuilder
      */
-    protected $jsonLoader = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $jsonLoader = null;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $fileLocatorMock = $this->getMock(
-            'Symfony\Component\Config\FileLocatorInterface'
+        $fileLocatorMock = $this->createMock(
+            \Symfony\Component\Config\FileLocatorInterface::class
         );
 
         $this->jsonLoader = $this->getMockBuilder(
             'Cascade\Config\Loader\FileLoader\Json'
         )
             ->setConstructorArgs(array($fileLocatorMock))
-            ->setMethods(array('readFrom', 'isFile', 'validateExtension'))
+            ->onlyMethods(array('readFrom', 'isFile', 'validateExtension'))
             ->getMock();
     }
 
-    public function tearDown()
+    protected function teardown(): void
     {
         $this->jsonLoader = null;
         parent::tearDown();
@@ -50,7 +50,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading a JSON string
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $json = Fixtures::getSampleJsonString();
 
@@ -69,7 +69,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
      *
      * @return array array non-string values
      */
-    public function notStringDataProvider()
+    public function notStringDataProvider(): array
     {
         return array(
             array(array()),
@@ -78,7 +78,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
             array(123.456),
             array(null),
             array(new \stdClass),
-            array(function () {
+            array(function (): void {
             })
         );
     }
@@ -89,7 +89,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
      * @param mixed $invalidResource Invalid resource value
      * @dataProvider notStringDataProvider
      */
-    public function testSupportsWithInvalidResource($invalidResource)
+    public function testSupportsWithInvalidResource($invalidResource): void
     {
         $this->assertFalse($this->jsonLoader->supports($invalidResource));
     }
@@ -97,7 +97,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading a JSON string
      */
-    public function testSupportsWithJsonString()
+    public function testSupportsWithJsonString(): void
     {
         $this->jsonLoader->expects($this->once())
             ->method('isFile')
@@ -112,7 +112,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
      * Test loading a JSON file
      * Note that this function tests isJson with a valid Json string
      */
-    public function testSupportsWithJsonFile()
+    public function testSupportsWithJsonFile(): void
     {
         $this->jsonLoader->expects($this->once())
             ->method('isFile')
@@ -131,7 +131,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
      * Test isJson method with invalid JSON string.
      * Valid scenario is tested by the method above
      */
-    public function testSupportsWithNonJsonString()
+    public function testSupportsWithNonJsonString(): void
     {
         $this->jsonLoader->expects($this->once())
             ->method('isFile')

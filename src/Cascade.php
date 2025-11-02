@@ -49,7 +49,7 @@ class Cascade
         $name,
         array $handlers = array(),
         array $processors = array()
-    ) {
+    ): \Monolog\Logger {
 
         if (empty($name)) {
             throw new \InvalidArgumentException('Logger name is required.');
@@ -102,7 +102,7 @@ class Cascade
      *
      * @param string $resource Path to config file or string or array
      */
-    public static function fileConfig($resource)
+    public static function fileConfig($resource): void
     {
         self::$config = new Config($resource, new ConfigLoader());
         self::$config->load();

@@ -18,8 +18,10 @@ use Cascade\Config\Loader\ClassLoader\Resolver\ConstructorResolver;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
+class ConstructorResolverTest extends \PHPUnit\Framework\TestCase
 {
+    public $class;
+
     /**
      * Reflection class for which you want to resolve extra options
      * @var \ReflectionClass
@@ -35,9 +37,9 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Set up function
      */
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->class = 'Cascade\Tests\Fixtures\SampleClass';
+        $this->class = \Cascade\Tests\Fixtures\SampleClass::class;
         $this->resolver = new ConstructorResolver(new \ReflectionClass($this->class));
         parent::setUp();
     }
@@ -45,7 +47,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Tear down function
      */
-    public function tearDown()
+    protected function teardown(): void
     {
         $this->resolver = null;
         $this->class = null;
@@ -65,7 +67,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the resolver contructor
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $this->assertEquals($this->class, $this->resolver->getReflected()->getName());
     }
@@ -76,20 +78,21 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      * Note that we need to deuplicate the CamelCase conversion here for old
      * fashioned classes
      */
-    public function testInitConstructorArgs()
+    public function testInitConstructorArgs(): void
     {
         $expectedConstructorArgs = array();
 
         foreach ($this->getConstructorArgs() as $param) {
             $expectedConstructorArgs[Util::snakeToCamelCase($param->getName())] = $param;
         }
+
         $this->assertEquals($expectedConstructorArgs, $this->resolver->getConstructorArgs());
     }
 
     /**
      * Test the hashToArgsArray function
      */
-    public function testHashToArgsArray()
+    public function testHashToArgsArray(): void
     {
         $this->assertEquals(
             array('someValue', 'hello', 'there', 'slither'),
@@ -112,7 +115,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @return array of arrays with expected resolved values and options used as input
      */
-    public function optionsProvider()
+    public function optionsProvider(): array
     {
         return array(
             array(
@@ -146,7 +149,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      * @param  array $options Array of raw options
      * @dataProvider optionsProvider
      */
-    public function testResolve(array $expectedResolvedOptions, array $options)
+    public function testResolve(array $expectedResolvedOptions, array $options): void
     {
         $this->assertEquals($expectedResolvedOptions, $this->resolver->resolve($options));
     }
@@ -159,7 +162,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @return array of arrays with expected resolved values and options used as input
      */
-    public function missingOptionsProvider()
+    public function missingOptionsProvider(): array
     {
         return array(
             array(
@@ -181,10 +184,10 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @param  array $incompleteOptions Array of invalid options
      * @dataProvider missingOptionsProvider
-     * @expectedException Symfony\Component\OptionsResolver\Exception\MissingOptionsException
      */
-    public function testResolveWithMissingOptions(array $incompleteOptions)
+    public function testResolveWithMissingOptions(array $incompleteOptions): void
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\MissingOptionsException::class);
         $this->resolver->resolve($incompleteOptions);
     }
 
@@ -196,7 +199,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @return array of arrays with expected resolved values and options used as input
      */
-    public function invalidOptionsProvider()
+    public function invalidOptionsProvider(): array
     {
         return array(
             array(
@@ -220,10 +223,10 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @param  array $invalidOptions Array of invalid options
      * @dataProvider invalidOptionsProvider
-     * @expectedException Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
      */
-    public function testResolveWithInvalidOptions($invalidOptions)
+    public function testResolveWithInvalidOptions(array $invalidOptions): void
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException::class);
         $this->resolver->resolve($invalidOptions);
     }
 }

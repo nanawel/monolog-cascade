@@ -17,8 +17,12 @@ use Cascade\Config\Loader\ClassLoader\Resolver\ExtraOptionsResolver;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
+class ExtraOptionsResolverTest extends \PHPUnit\Framework\TestCase
 {
+    public $class;
+
+    public $params;
+
     /**
      * Reflection class for which you want to resolve extra options
      * @var \ReflectionClass
@@ -34,9 +38,9 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Set up function
      */
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->class = 'Cascade\Tests\Fixtures\SampleClass';
+        $this->class = \Cascade\Tests\Fixtures\SampleClass::class;
         $this->params = array('optionalA', 'optionalB');
         $this->resolver = new ExtraOptionsResolver(
             new \ReflectionClass($this->class),
@@ -48,7 +52,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Tear down function
      */
-    public function tearDown()
+    protected function teardown(): void
     {
         $this->resolver = null;
         $this->class = null;
@@ -58,7 +62,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the hsah key generation
      */
-    public function testGenerateParamsHashKey()
+    public function testGenerateParamsHashKey(): void
     {
         $a = array('optionA', 'optionB', 'optionC');
         $b = array('optionA', 'optionB', 'optionC');
@@ -72,7 +76,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the resolver contructor
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $this->assertEquals($this->class, $this->resolver->getReflected()->getName());
         $this->assertEquals($this->params, $this->resolver->getParams());
@@ -81,7 +85,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Test resolving with valid options
      */
-    public function testResolve()
+    public function testResolve(): void
     {
         $this->assertEquals(
             array_combine($this->params, array('hello', 'there')),
@@ -100,14 +104,12 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @return array of arrays with expected resolved values and options used as input
      */
-    public function optionsProvider()
+    public function optionsProvider(): array
     {
         return array(
             array(
                 array('optionalA', 'optionalB', 'mandatory'),
-                $this->getMockBuilder('Cascade\Config\Loader\ClassLoader')
-                    ->disableOriginalConstructor()
-                    ->getMock()->method('canHandle')
+                $this->createMock(\Cascade\Config\Loader\ClassLoader::class)->method('canHandle')
                     ->willReturn(true)
             )
         );
@@ -116,7 +118,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * Test resolving with valid options
      */
-    public function testResolveWithCustomOptionHandler()
+    public function testResolveWithCustomOptionHandler(): void
     {
         $this->params = array('optionalA', 'optionalB', 'mandatory');
         $this->resolver = new ExtraOptionsResolver(
@@ -125,9 +127,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
         );
 
         // Create a stub for the SomeClass class.
-        $stub = $this->getMockBuilder('Cascade\Config\Loader\ClassLoader')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $stub = $this->createMock(\Cascade\Config\Loader\ClassLoader::class);
 
         $stub->method('canHandle')
             ->willReturn(true);
@@ -144,7 +144,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @return array of arrays with expected resolved values and options used as input
      */
-    public function invalidOptionsProvider()
+    public function invalidOptionsProvider(): array
     {
         return array(
             array(
@@ -166,10 +166,10 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
      *
      * @param  array $invalidOptions Array of invalid options
      * @dataProvider invalidOptionsProvider
-     * @expectedException Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
      */
-    public function testResolveWithInvalidOptions($invalidOptions)
+    public function testResolveWithInvalidOptions(array $invalidOptions): void
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException::class);
         $this->resolver->resolve($invalidOptions);
     }
 }

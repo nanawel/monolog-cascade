@@ -19,12 +19,12 @@ use Cascade\Config\Loader\ClassLoader\ProcessorLoader;
  *
  * @author Kate Burdon <kburdon@tableau.com>
  */
-class ProcessorLoaderTest extends \PHPUnit_Framework_TestCase
+class ProcessorLoaderTest extends \PHPUnit\Framework\TestCase
 {
-    public function testProcessorLoader()
+    public function testProcessorLoader(): void
     {
         $options = array(
-            'class' => 'Monolog\Processor\WebProcessor'
+            'class' => \Monolog\Processor\WebProcessor::class
         );
         $processors = array(new WebProcessor());
         $loader = new ProcessorLoader($options, $processors);

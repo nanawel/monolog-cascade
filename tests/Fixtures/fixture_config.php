@@ -22,28 +22,28 @@ return array(
     ),
     'handlers' => array(
         'console' => array(
-            'class' => 'Monolog\Handler\StreamHandler',
+            'class' => \Monolog\Handler\StreamHandler::class,
             'level' => 'DEBUG',
             'formatter' => 'spaced',
             'stream' => 'php://stdout'
         ),
 
         'info_file_handler' => array(
-            'class' => 'Monolog\Handler\StreamHandler',
+            'class' => \Monolog\Handler\StreamHandler::class,
             'level' => 'INFO',
             'formatter' => 'dashed',
             'stream' => './demo_info.log'
         ),
 
         'error_file_handler' => array(
-            'class' => 'Monolog\Handler\StreamHandler',
+            'class' => \Monolog\Handler\StreamHandler::class,
             'level' => 'ERROR',
             'stream' => './demo_error.log',
             'formatter' => 'spaced'
         ),
 
         'group_handler' => array(
-            'class' => 'Monolog\Handler\GroupHandler',
+            'class' => \Monolog\Handler\GroupHandler::class,
             'handlers' => array(
                 'console',
                 'info_file_handler',
@@ -51,13 +51,13 @@ return array(
         ),
 
         'fingers_crossed_handler' => array(
-            'class' => 'Monolog\Handler\FingersCrossedHandler',
+            'class' => \Monolog\Handler\FingersCrossedHandler::class,
             'handler' => 'group_handler',
         ),
     ),
     'processors' => array(
         'tag_processor' => array(
-            'class' => 'Monolog\Processor\TagProcessor'
+            'class' => \Monolog\Processor\TagProcessor::class
         )
     ),
     'loggers' => array(

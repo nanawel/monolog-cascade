@@ -21,25 +21,25 @@ use Cascade\Config\Loader\ClassLoader\LoggerLoader;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
+class LoggerLoaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Tear down function
      */
-    public function tearDown()
+    protected function teardown(): void
     {
         parent::tearDown();
         Registry::clear();
     }
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $loader = new LoggerLoader('testLogger');
 
         $this->assertTrue(Registry::hasLogger('testLogger'));
     }
 
-    public function testResolveHandlers()
+    public function testResolveHandlers(): void
     {
         $options = array(
             'handlers' => array('test_handler_1', 'test_handler_2')
@@ -56,11 +56,9 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testResolveHandlersWithMismatch()
+    public function testResolveHandlersWithMismatch(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         $options = array(
             'handlers' => array('unexisting_handler', 'test_handler_2')
         );
@@ -74,9 +72,9 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $loader->resolveHandlers($options, $handlers);
     }
 
-    public function testResolveProcessors()
+    public function testResolveProcessors(): void
     {
-        $dummyClosure = function () {
+        $dummyClosure = function (): void {
             // Empty function
         };
         $options = array(
@@ -95,12 +93,10 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testResolveProcessorsWithMismatch()
+    public function testResolveProcessorsWithMismatch(): void
     {
-        $dummyClosure = function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $dummyClosure = function (): void {
             // Empty function
         };
         $options = array(
@@ -117,7 +113,7 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $loader->resolveProcessors($options, $processors);
     }
 
-    public function testLoad()
+    public function testLoad(): void
     {
         $options = array(
             'handlers' => array('test_handler_1', 'test_handler_2'),
@@ -127,7 +123,7 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
             'test_handler_1' => new TestHandler(),
             'test_handler_2' => new TestHandler()
         );
-        $dummyClosure = function () {
+        $dummyClosure = function (): void {
             // Empty function
         };
         $processors = array(

@@ -21,33 +21,32 @@ use Cascade\Tests\Fixtures;
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class FileLoaderAbstractTest extends \PHPUnit_Framework_TestCase
+class FileLoaderAbstractTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Mock of extending Cascade\Config\Loader\FileLoader\FileLoaderAbstract
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
-    protected $mock = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $mock = null;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $fileLocatorMock = $this->getMock(
-            'Symfony\Component\Config\FileLocatorInterface'
+        $fileLocatorMock = $this->createMock(
+            \Symfony\Component\Config\FileLocatorInterface::class
         );
 
-        $this->mock = $this->getMockForAbstractClass(
-            'Cascade\Config\Loader\FileLoader\FileLoaderAbstract',
-            array($fileLocatorMock),
-            'FileLoaderAbstractMockClass' // mock class name
-        );
+        $this->mock = $this->getMockBuilder(\Cascade\Config\Loader\FileLoader\FileLoaderAbstract::class)
+            ->setConstructorArgs(array($fileLocatorMock))
+            ->onlyMethods(array('load', 'supports'))
+            ->getMock();
 
         // Setting valid extensions for tests
-        \FileLoaderAbstractMockClass::$validExtensions = array('test', 'php');
+        $this->mock::$validExtensions = array('test', 'php');
     }
 
-    public function tearDown()
+    protected function teardown(): void
     {
         $this->mock = null;
         parent::tearDown();
@@ -56,7 +55,7 @@ class FileLoaderAbstractTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading config from a valid file
      */
-    public function testReadFrom()
+    public function testReadFrom(): void
     {
         $this->assertEquals(
             Fixtures::getSampleYamlString(),
@@ -67,7 +66,7 @@ class FileLoaderAbstractTest extends \PHPUnit_Framework_TestCase
     /**
      * Test loading config from a valid file
      */
-    public function testLoadFileFromString()
+    public function testLoadFileFromString(): void
     {
         $this->assertEquals(
             trim(Fixtures::getSampleString()),
@@ -80,7 +79,7 @@ class FileLoaderAbstractTest extends \PHPUnit_Framework_TestCase
      *
      * @return array array with original value, section and expected value
      */
-    public function extensionsDataProvider()
+    public function extensionsDataProvider(): array
     {
         return array(
             array(true, 'hello/world.test'),
@@ -98,7 +97,7 @@ class FileLoaderAbstractTest extends \PHPUnit_Framework_TestCase
      * @param string filepath Filepath to validate
      * @dataProvider extensionsDataProvider
      */
-    public function testValidateExtension($expected, $filepath)
+    public function testValidateExtension(bool $expected, string $filepath): void
     {
         if ($expected) {
             $this->assertTrue($this->mock->validateExtension($filepath));
@@ -112,7 +111,7 @@ class FileLoaderAbstractTest extends \PHPUnit_Framework_TestCase
      *
      * @return array array wit original value, section and expected value
      */
-    public function arrayDataProvider()
+    public function arrayDataProvider(): array
     {
         return array(
             array(
@@ -144,18 +143,17 @@ class FileLoaderAbstractTest extends \PHPUnit_Framework_TestCase
      * @param array $expected Expected array for the given section
      * @dataProvider arrayDataProvider
      */
-    public function testGetSectionOf(array $array, $section, array $expected)
+    public function testGetSectionOf(array $array, string $section, array $expected): void
     {
         $this->assertSame($expected, $this->mock->getSectionOf($array, $section));
     }
 
     /**
      * Test loading an invalid file
-     *
-     * @expectedException RuntimeException
      */
-    public function testloadFileFromInvalidFile()
+    public function testloadFileFromInvalidFile(): void
     {
+        $this->expectException(\RuntimeException::class);
         // mocking the file system from a 'config_dir' base dir
         $root = vfsStream::setup('config_dir');
 

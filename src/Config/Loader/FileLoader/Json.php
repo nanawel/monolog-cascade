@@ -47,11 +47,11 @@ class Json extends FileLoaderAbstract
      *
      * @return boolean Whether or not the passed string is meant to be a JSON string
      */
-    private function isJson($string)
+    private function isJson($string): bool
     {
         return (
             !empty($string) &&
-            ($string{0} === '[' || $string{0} === '{')
+            ($string[0] === '[' || $string[0] === '{')
         );
     }
 
